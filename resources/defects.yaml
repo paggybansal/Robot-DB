@@ -1,0 +1,77 @@
+# status: open  = broken today; the test PASSES when it finds the problem
+#         fixed = Dev says fixed; the test FAILS if the problem is still there
+#         ask   = awaiting a business answer; not counted either way
+
+DEF-004:
+  severity: P0
+  status: open
+  title: "Service address filter applied after ranking, so a practitioner whose
+          newest address is Mail sends no address and silently falls out."
+
+DEF-005:
+  severity: P0
+  status: ask
+  title: "entityAssignments joined on ParentRecID with no parent-type column, so a
+          practitioner ID could match a row about a different record type."
+  question: "Does ParentRecID hold only practitioner IDs, or are IDs shared across
+             record types? If shared, the join needs a type discriminator."
+
+DEF-008:
+  severity: P0
+  status: open
+  title: "No DISTINCT in the selection query. Join fan-out submits one practitioner
+          to CAQH several times per run and the reported count is wrong."
+
+DEF-009:
+  severity: P0
+  status: open
+  title: "Detail query has no ChangedOn filter, so credentialing type can come from
+          a different assignment row than the one that qualified."
+
+DEF-021:
+  severity: P0
+  status: open
+  title: "A blank CAQH ID row alongside a real one is counted as a duplicate, so a
+          valid practitioner is wrongly rejected."
+
+DEF-032:
+  severity: P1
+  status: open
+  title: "Gender values outside the known mapping pass through unmapped instead of
+          being rejected with a clear reason."
+
+DEF-033:
+  severity: P1
+  status: open
+  title: "Bookmark advances even when records failed, so failed records are never
+          re-selected."
+
+DEF-034:
+  severity: P1
+  status: open
+  title: "Retry count is not capped, so a permanently failing record can retry
+          indefinitely."
+
+DEF-036:
+  severity: P2
+  status: open
+  title: "Provider type lookup excludes NULL Archived while every other query treats
+          NULL as active, so the two disagree about what active means."
+
+LOG-01:
+  severity: P0
+  status: open
+  title: "PHI written to CloudWatch: name, NPI, date of birth, CAQH ID and the full
+          profile XML."
+
+DATA-01:
+  severity: P1
+  status: open
+  title: "Practitioners eligible for CAQH with no NPI. Each is a guaranteed rejection
+          that should be caught before transmission."
+
+DATA-02:
+  severity: P2
+  status: open
+  title: "Practitioners with two Service addresses sharing a DateFrom. Which one is
+          sent is undefined between runs."

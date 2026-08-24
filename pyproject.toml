@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "caqh-qa"
+version = "1.0.0"
+description = "Robot Framework QA suite for the CAQH provider credentialing pipeline"
+requires-python = ">=3.11"
+
+dependencies = [
+    # test framework
+    "robotframework==7.1.1",
+    "robotframework-pabot==4.1.1",
+
+    # configuration
+    "pydantic==2.10.4",
+    "pydantic-settings==2.7.0",
+    "python-dotenv==1.0.1",
+    "PyYAML==6.0.2",
+
+    # database
+    "SQLAlchemy==2.0.36",
+    "pyodbc==5.2.0",
+
+    # AWS
+    "boto3==1.35.76",
+
+    # resilience
+    "tenacity==9.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "robotframework-tidy==4.16.0",     # formats .robot files
+    "robotframework-robocop==5.6.0",   # lints .robot files
+    "ruff==0.8.4",
+]
+
+[tool.setuptools.packages.find]
+include = ["libraries*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

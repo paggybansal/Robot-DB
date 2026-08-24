@@ -1,0 +1,26 @@
+caqh-qa/
+├── pyproject.toml
+├── .env.example
+├── .gitignore
+├── libraries/                    Python engine
+│   ├── __init__.py
+│   ├── config.py                 pydantic-settings (carried over)
+│   ├── variables.py              feeds settings into Robot
+│   ├── CaqhDatabase.py           SQL keywords
+│   ├── CaqhDefects.py            the register keyword
+│   └── CaqhAws.py                Glue / DynamoDB / S3 keywords
+├── resources/
+│   ├── common.robot              shared setup and keywords
+│   ��── queries.yaml              reference SQL (carried over)
+│   └── defects.yaml              defect register (carried over)
+├── tests/
+│   ├── 00_schema.robot
+│   ├── 01_selection.robot
+│   ├── 02_address.robot
+│   ├── 03_validation.robot
+│   ├── 04_pipeline.robot
+│   └── 05_retry.robot
+├── tools/
+│   ├── check_env.py
+│   └── discover.py
+└── .github/workflows/qa.yml
