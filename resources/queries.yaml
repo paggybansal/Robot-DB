@@ -1,0 +1,229 @@
+# =============================================================================
+# CAQH QA reference queries
+#
+# Confirmed database objects:
+#   Practitioners
+#   EntityAssignments
+#   Entities
+#   StatusTypes
+#   CommitteeActions
+#   PractitionerProfessionalIDs
+#   ProfessionalIDTypes
+#
+# Active records use Archived = 'N'.
+# The database does not use NULL for active Archived values.
+#
+# Parameters provided automatically by libraries/CaqhDatabase.py:
+#   :client       = CLIENT_ENTITY
+#   :status       = TRIGGER_STATUS
+#   :actions      = CRED_ACTIONS
+#   :caqh_type    = CAQH_ID_TYPE
+#   :service      = SERVICE_ADDRESS_TYPE
+# =============================================================================
+
+
+# ---------------------------------------------------------------------------
+# Base eligible population
+#
+# This is the important query. It selects practitioners assigned to:
+#   - HealthSpring
+#   - Awaiting CAQH
+#   - Initial Credentialing or Recredentialing
+#
+# EntityAssignments.ParentRecID is assumed to be the PractitionerID link.
+# The next discovery/test run will validate that assumption against real data.
+# ---------------------------------------------------------------------------
+
+eligible_population: &eligible_population |
+  SELECT
+      p.PractitionerID,
+      p.NationalProviderID,
+      p.PractitionerTypeID,
+      ea.EntityAssignmentRecID,
+      ea.EntityID,
+      ea.ApplicationStatusTypeID,
+      ea.CommitteeActionID
+  FROM Practitioners AS p
+  INNER JOIN EntityAssignments AS ea
+      ON ea.ParentRecID = p.PractitionerID
+  INNER JOIN Entities AS e
+      ON e.EntityID = ea.EntityID
+  INNER JOIN StatusTypes AS st
+      ON st.StatusTypeID = ea.ApplicationStatusTypeID
+  INNER JOIN CommitteeActions AS ca
+      ON ca.CommitteeActionID = ea.CommitteeActionID
+  WHERE p.Archived = 'N'
+    AND ea.Archived = 'N'
+    AND e.Archived = 'N'
+    AND st.Archived = 'N'
+    AND ca.Archived = 'N'
+    AND e.EntityName = :client
+    AND st.StatusTypeName = :status
+    AND ca.CommitteeActionName IN :actions
+
+
+# Alias for suites that use this name.
+eligible_practitioners: *eligible_population
+
+
+# Used by tools/discover.py, section 7.
+# It identifies whether the configured population exists and whether joins
+# cause duplicate/fan-out rows.
+eligible_row_count: |
+  WITH eligible AS (
+      SELECT
+          p.PractitionerID
+      FROM Practitioners AS p
+      INNER JOIN EntityAssignments AS ea
+          ON ea.ParentRecID = p.PractitionerID
+      INNER JOIN Entities AS e
+          ON e.EntityID = ea.EntityID
+      INNER JOIN StatusTypes AS st
+          ON st.StatusTypeID = ea.ApplicationStatusTypeID
+      INNER JOIN CommitteeActions AS ca
+          ON ca.CommitteeActionID = ea.CommitteeActionID
+      WHERE p.Archived = 'N'
+        AND ea.Archived = 'N'
+        AND e.Archived = 'N'
+        AND st.Archived = 'N'
+        AND ca.Archived = 'N'
+        AND e.EntityName = :client
+        AND st.StatusTypeName = :status
+        AND ca.CommitteeActionName IN :actions
+  )
+  SELECT
+      COUNT(*) AS joined_rows,
+      COUNT(DISTINCT PractitionerID) AS distinct_practitioners
+  FROM eligible
+
+
+# ---------------------------------------------------------------------------
+# DEF-008: fan-out / duplicate eligible practitioners
+#
+# A practitioner should normally appear once in the selected CAQH population.
+# More than one EntityAssignment row may be legitimate in some situations,
+# so treat this as an investigation result until business rules confirm it.
+# ---------------------------------------------------------------------------
+
+fan_out: |
+  WITH eligible AS (
+      SELECT
+          p.PractitionerID,
+          ea.EntityAssignmentRecID
+      FROM Practitioners AS p
+      INNER JOIN EntityAssignments AS ea
+          ON ea.ParentRecID = p.PractitionerID
+      INNER JOIN Entities AS e
+          ON e.EntityID = ea.EntityID
+      INNER JOIN StatusTypes AS st
+          ON st.StatusTypeID = ea.ApplicationStatusTypeID
+      INNER JOIN CommitteeActions AS ca
+          ON ca.CommitteeActionID = ea.CommitteeActionID
+      WHERE p.Archived = 'N'
+        AND ea.Archived = 'N'
+        AND e.Archived = 'N'
+        AND st.Archived = 'N'
+        AND ca.Archived = 'N'
+        AND e.EntityName = :client
+        AND st.StatusTypeName = :status
+        AND ca.CommitteeActionName IN :actions
+  )
+  SELECT
+      PractitionerID,
+      COUNT(*) AS assignment_rows
+  FROM eligible
+  GROUP BY PractitionerID
+  HAVING COUNT(*) > 1
+  ORDER BY assignment_rows DESC, PractitionerID
+
+
+# ---------------------------------------------------------------------------
+# CAQH identifier checks
+#
+# Actual NPI column is NationalProviderID, not NPI.
+# CAQH identifiers are held in PractitionerProfessionalIDs.
+# ---------------------------------------------------------------------------
+
+eligible_missing_caqh_id: |
+  WITH eligible AS (
+      SELECT DISTINCT
+          p.PractitionerID,
+          p.NationalProviderID
+      FROM Practitioners AS p
+      INNER JOIN EntityAssignments AS ea
+          ON ea.ParentRecID = p.PractitionerID
+      INNER JOIN Entities AS e
+          ON e.EntityID = ea.EntityID
+      INNER JOIN StatusTypes AS st
+          ON st.StatusTypeID = ea.ApplicationStatusTypeID
+      INNER JOIN CommitteeActions AS ca
+          ON ca.CommitteeActionID = ea.CommitteeActionID
+      WHERE p.Archived = 'N'
+        AND ea.Archived = 'N'
+        AND e.Archived = 'N'
+        AND st.Archived = 'N'
+        AND ca.Archived = 'N'
+        AND e.EntityName = :client
+        AND st.StatusTypeName = :status
+        AND ca.CommitteeActionName IN :actions
+  )
+  SELECT
+      ep.PractitionerID,
+      ep.NationalProviderID
+  FROM eligible AS ep
+  WHERE NOT EXISTS (
+      SELECT 1
+      FROM PractitionerProfessionalIDs AS ppi
+      INNER JOIN ProfessionalIDTypes AS pit
+          ON pit.ProfessionalIDTypeID = ppi.ProfessionalIDTypeID
+      WHERE ppi.PractitionerID = ep.PractitionerID
+        AND ppi.Archived = 'N'
+        AND pit.Archived = 'N'
+        AND pit.ProfessionalIDTypeName = :caqh_type
+        AND NULLIF(LTRIM(RTRIM(ppi.IDNumber)), '') IS NOT NULL
+  )
+  ORDER BY ep.PractitionerID
+
+
+# Alias in case the Robot suite uses a shorter query name.
+missing_caqh_id: *eligible_missing_caqh_id
+
+
+# Finds a CAQH ID assigned to more than one selected practitioner.
+duplicate_caqh_id: |
+  WITH eligible AS (
+      SELECT DISTINCT
+          p.PractitionerID
+      FROM Practitioners AS p
+      INNER JOIN EntityAssignments AS ea
+          ON ea.ParentRecID = p.PractitionerID
+      INNER JOIN Entities AS e
+          ON e.EntityID = ea.EntityID
+      INNER JOIN StatusTypes AS st
+          ON st.StatusTypeID = ea.ApplicationStatusTypeID
+      INNER JOIN CommitteeActions AS ca
+          ON ca.CommitteeActionID = ea.CommitteeActionID
+      WHERE p.Archived = 'N'
+        AND ea.Archived = 'N'
+        AND e.Archived = 'N'
+        AND st.Archived = 'N'
+        AND ca.Archived = 'N'
+        AND e.EntityName = :client
+        AND st.StatusTypeName = :status
+        AND ca.CommitteeActionName IN :actions
+  )
+  SELECT
+      ppi.IDNumber AS caqh_id,
+      COUNT(DISTINCT ppi.PractitionerID) AS practitioner_count
+  FROM eligible AS ep
+  INNER JOIN PractitionerProfessionalIDs AS ppi
+      ON ppi.PractitionerID = ep.PractitionerID
+  INNER JOIN ProfessionalIDTypes AS pit
+      ON pit.ProfessionalIDTypeID = ppi.ProfessionalIDTypeID
+  WHERE ppi.Archived = 'N'
+    AND pit.Archived = 'N'
+    AND pit.ProfessionalIDTypeName = :caqh_type
+    AND NULLIF(LTRIM(RTRIM(ppi.IDNumber)), '') IS NOT NULL
+  GROUP BY ppi.IDNumber
+  HAVING COUNT(DISTINCT ppi.PractitionerID) > 1
+  ORDER BY practitioner_count DESC, caqh_id
