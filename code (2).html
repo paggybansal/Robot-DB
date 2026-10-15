@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise PDQA Automation Framework - Knowledge Transfer Manual</title>
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --secondary-color: #1e293b;
+            --accent-color: #2563eb;
+            --text-color: #334155;
+            --bg-light: #f8fafc;
+            --border-color: #e2e8f0;
+            --code-bg: #1e1e2e;
+            --code-text: #cdd6f4;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 3rem 2rem;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-color);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+        }
+
+        header p {
+            margin: 0.75rem 0 0 0;
+            font-size: 1.2rem;
+            color: #94a3b8;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 2rem auto;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 2rem;
+            padding: 0 1.5rem;
+        }
+
+        /* Sidebar Navigation */
+        aside {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+
+        aside h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        aside ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        aside li {
+            margin: 0.5rem 0;
+        }
+
+        aside a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: block;
+            padding: 0.4rem 0.75rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        aside a:hover {
+            background-color: #f1f5f9;
+            color: var(--accent-color);
+            padding-left: 1rem;
+        }
+
+        aside a.active {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Main Content Panel */
+        main {
+            background: #ffffff;
+            padding: 4rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        section {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 4rem;
+            margin-bottom: 4rem;
+            scroll-margin-top: 2rem;
+        }
+
+        section:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-top: 0;
+            border-left: 6px solid var(--accent-color);
+            padding-left: 1.25rem;
+            letter-spacing: -0.03em;
+        }
+
+        h3 {
+            color: var(--secondary-color);
+            font-size: 1.4rem;
+            margin-top: 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        h4 {
+            color: var(--primary-color);
+            font-size: 1.15rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+            color: #475569;
+        }
+
+        ul, ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            color: #475569;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Code Block Styling */
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.5rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Fira Code', Consolas, Monaco, monospace;
+            font-size: 0.9rem;
+            border: 1px solid #313244;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            margin: 1.5rem 0;
+        }
+
+        code {
+            font-family: 'Fira Code', Consolas, Monaco, monospace;
+            background-color: #f1f5f9;
+            color: #0f172a;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+            font-size: inherit;
+        }
+
+        /* Callout Box Designs */
+        .info-box {
+            background-color: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin: 1.5rem 0;
+        }
+
+        .info-box h4 {
+            margin: 0 0 0.5rem 0;
+            color: #1e3a8a;
+            font-size: 1.1rem;
+        }
+
+        .warning-box {
+            background-color: #fffbeb;
+            border-left: 4px solid var(--warning-color);
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box h4 {
+            margin: 0 0 0.5rem 0;
+            color: #78350f;
+            font-size: 1.1rem;
+        }
+
+        .danger-box {
+            background-color: #fef2f2;
+            border-left: 4px solid var(--danger-color);
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin: 1.5rem 0;
+        }
+
+        .danger-box h4 {
+            margin: 0 0 0.5rem 0;
+            color: #7f1d1d;
+            font-size: 1.1rem;
+        }
+
+        /* Clean Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--bg-light);
+        }
+
+        /* ASCII Art Architecture Diagrams */
+        .diagram {
+            font-family: monospace;
+            white-space: pre;
+            background-color: #1e293b;
+            color: #38bdf8;
+            padding: 1.25rem;
+            border-radius: 6px;
+            line-height: 1.3;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            border: 1px solid #334155;
+            margin: 1.5rem 0;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #fff;
+        }
+        .badge-pre { background-color: #3b82f6; }
+        .badge-post { background-color: #8b5cf6; }
+        .badge-both { background-color: #10b981; }
+        .badge-err { background-color: var(--danger-color); }
+        .badge-succ { background-color: var(--success-color); }
+        .badge-info { background-color: #64748b; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>PDQA Automation Framework</h1>
+    <p>Enterprise Provider Data Quality E2E Test Automation Architecture & Knowledge Transfer Guide</p>
+</header>
+
+<div class="container">
+    <aside>
+        <h3>Table of Contents</h3>
+        <ul>
+            <li><strong>DAY 1: DOMAIN & DATA MODELS</strong></li>
+            <li><a href="#day1-vocab">Domain Vocabulary & Concepts</a></li>
+            <li><a href="#day1-mapping">Unified Address Mapping Models</a></li>
+            <li><a href="#day1-databases">Dual Database Schema Designs</a></li>
+            <li><a href="#day1-keywords">E2E Flow Core Python Logic</a></li>
+            <li><strong>DAY 2: BUSINESS RULES & SCENARIOS</strong></li>
+            <li><a href="#day2-gorules">GoRules Parsing & Integration</a></li>
+            <li><a href="#day2-scenarios">Real-Life Test Scenarios</a></li>
+            <li><a href="#day2-troubleshooting">Debugging Failed Executions</a></li>
+            <li><a href="#day2-extending">Extending the Automation Suite</a></li>
+        </ul>
+    </aside>
+
+    <main>
+        <!-- DAY 1: DOMAIN VOCABULARY & CONCEPTS -->
+        <section id="day1-vocab">
+            <h2>Day 1: Domain Vocabulary & Concepts</h2>
+            <p>To successfully operate and extend the Provider Data Quality Automation (PDQA) framework, you must possess a robust understanding of the healthcare provider credentialing domain. This automation does not simply click UI elements; it maps, validates, and asserts complex data states representing actual clinical and billing networks.</p>
+
+            <div class="info-box">
+                <h4>What is a Provider?</h4>
+                <p>In healthcare, a "Provider" can be an individual person or an organization. In our system, these entities are explicitly divided into <strong>Practitioners</strong>, <strong>Practices</strong>, and <strong>Facilities</strong>. Each carries unique regulatory structures and database dependencies.</p>
+            </div>
+
+            <h3>The Three Core Entities</h3>
+            
+            <h4>1. Practitioner</h4>
+            <p>A Practitioner is an individual healthcare professional licensed to deliver clinical services (e.g., Doctors of Medicine (MD), Doctor of Osteopathic Medicine (DO), Advanced Practice Registered Nurses (APRN), Audiologists). 
+            <ul>
+                <li><strong>Identifiers:</strong> Individually identified by a 10-digit <strong>Type-1 NPI (National Provider Identifier)</strong> and a 9-digit <strong>Social Security Number (SSN)</strong>.</li>
+                <li><strong>Credentialing Rules:</strong> Must be linked to at least one primary specialty and must have active licensing before insurance products can be attached.</li>
+            </ul>
+
+            <h4>2. Practice (Group / Clinic Network)</h4>
+            <p>A Practice represents a business entity or corporate group under which practitioners operate (e.g., "Advocate Radiation Oncology" or "University of Maryland St. Joseph Medical Group").
+            <ul>
+                <li><strong>Identifiers:</strong> Identified by an organizational 10-digit <strong>Type-2 NPI (Group NPI)</strong> and a corporate 9-digit <strong>Tax ID Number (TIN)</strong>.</li>
+                <li><strong>Role in Ingestion:</strong> Practices act as the corporate parent. Practitioners must establish a valid relation to a Practice before they can be scheduled or billed.</li>
+            </ul>
+
+            <h4>3. Facility</h4>
+            <p>A Facility is the physical location, building, or hospital institution where care is delivered (e.g., "Phoenix VAMC" or "Aiswarya Fertility Clinic").
+            <ul>
+                <li><strong>Identifiers:</strong> Identified by a Type-2 NPI, a Tax ID, and specialized Facility Type classifications (e.g., Behavioral Clinic, Urgent Care Center, Freestanding Emergency Room).</li>
+                <li><strong>Role in Ingestion:</strong> Facilities are strictly bound to location compliance. Their service addresses must be validated against USPS address guidelines before products can be linked.</li>
+            </ul>
+
+            <h3>Relational Data Entities</h3>
+            
+            <h4>The Primary Location Constraint</h4>
+            <p>A Practitioner can operate out of multiple locations within a Practice network (e.g., Dr. Smith works at the Waveland office on Mondays, and the Biloxi office on Tuesdays). However, to safeguard billing and contract enrollment, the system demands that exactly **one** location be explicitly marked as the <strong>Primary Location</strong> (<code>PrimaryLocation = 'Y'</code>). Product/insurance agreements are strictly bound to this primary location; attempting to link a product to a non-primary location triggers a fatal business rule rejection.</p>
+
+            <h4>The Anatomy of Addresses (Billing vs. Service vs. Tax ID)</h4>
+            <p>Healthcare data enforces a strict separation of concerns for addresses. A single clinic entity requires three distinct address definitions:</p>
+            
+            <div class="diagram">
+┌────────────────────────────────────────────────────────────────────────┐
+│                        PHYSICAL PRACTICE LOCATION                      │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+       ┌────────────────────────────┼────────────────────────────┐
+       ▼                            ▼                            ▼
+┌──────────────┐             ┌──────────────┐             ┌──────────────┐
+│ SERVICE ADDR │             │ BILLING ADDR │             │  TAX ID ADDR │
+├──────────────┤             ├──────────────┤             ├──────────────┤
+│ Where care   │             │ Where bills, │             │ Tied to TIN  │
+│ is delivered │             │ checks, & QA │             │ for 1099     │
+│ clinically   │             │ letters go   │             │ tax filing   │
+└──────────────┘             └──────────────┘             └──────────────┘</div>
+        </section>
+
+        <!-- DAY 1: UNIFIED ADDRESS MAPPING MODELS -->
+        <section id="day1-mapping">
+            <h2>Unified Address Mapping Models</h2>
+            <p>A major technical hurdle we overcame was a mapping mismatch between the <strong>Postgres/GoRules API engine</strong> and our <strong>Flat CSV bulk-upload template</strong>. GoRules evaluates three distinct address blocks, but our flat CSV structure historically only supported two (Billing and Service).</p>
+
+            <div class="warning-box">
+                <h4>The "Tax ID" Address Mapping Solution</h4>
+                <p>To populate and test the third node (<code>address.taxIDAddress</code>) without modifying the downstream legacy CSV parsers, we designed a mapping override. When we need to load a Tax ID Address, we populate the <strong>Billing Address Columns</strong> in the CSV, but we set the column value <strong>`BillingAddressTypeName`</strong> strictly to <strong>`"Tax ID"`</strong>. The loader reads this and routes it into the database as a Tax ID address, triggering the corresponding GoRules node.</p>
+            </div>
+
+            <h3>Entity Schema Comparison Table</h3>
+            <p>This reference table aligns the keys across our front-end JSON representation, the flat CSV upload headers, and the target database structures.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Context / Entity</th>
+                        <th>API JSON Key</th>
+                        <th>Flat CSV Column Header</th>
+                        <th>SQL Server Target Table / Column</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Practitioner NPI</td>
+                        <td>`nationalProviderID`</td>
+                        <td>`NationalProviderID`</td>
+                        <td>`Practitioners.NationalProviderID`</td>
+                    </tr>
+                    <tr>
+                        <td>Practitioner SSN</td>
+                        <td>`socialSecurityNumber`</td>
+                        <td>`SocialSecurityNumber`</td>
+                        <td>`Practitioners.SocialSecurityNumber`</td>
+                    </tr>
+                    <tr>
+                        <td>Group Parent NPI</td>
+                        <td>`groupNationalProviderID`</td>
+                        <td>`GroupNationalProviderID`</td>
+                        <td>`Practices.NationalProviderID`</td>
+                    </tr>
+                    <tr>
+                        <td>Location NPI</td>
+                        <td>`serviceLocation.groupNationalProviderID`</td>
+                        <td>`ServiceGroupNationalProviderID`</td>
+                        <td>`PracticeLocations.NationalProviderID`</td>
+                    </tr>
+                    <tr>
+                        <td>Location Type</td>
+                        <td>`locationTypeName`</td>
+                        <td>`ServiceAddressTypeName`</td>
+                        <td>`PracticeLocations.LocationTypeID`</td>
+                    </tr>
+                    <tr>
+                        <td>Primary Location</td>
+                        <td>`primaryLocation`</td>
+                        <td>`ServicePrimaryLocation`</td>
+                        <td>`PractitionerLocations.PrimaryLocation`</td>
+                    </tr>
+                    <tr>
+                        <td>Billing Address Type</td>
+                        <td>`billingLocation.addressTypeName`</td>
+                        <td>`BillingAddressTypeName`</td>
+                        <td>`PracticeLocations.AddressTypeID` (via lookup)</td>
+                    </tr>
+                    <tr>
+                        <td>Tax ID Address (Overriden)</td>
+                        <td>`taxIDAddress`</td>
+                        <td>`Billing...` (when Type = `"Tax ID"`)</td>
+                        <td>`PracticeLocations` (linked to `TaxIDNumber`)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- DAY 1: DUAL DATABASE SCHEMA DESIGNS -->
+        <section id="day1-databases">
+            <h2>Dual Database Schema Designs</h2>
+            <p>The PDQA automation suite validates transactions across two structurally distinct database systems. This section details the tables, relational columns, and schema structures necessary to construct automated queries.</p>
+
+            <h3>1. Postgres Database (Transaction Logging Schema)</h3>
+            <p>The transaction layer in Postgres logs the real-time status of each step in the file processing lifecycle. It uses a relational schema linking `process_status` and `payload_response` via the `payload_response_id` foreign key.</p>
+
+            <div class="diagram">
+TABLE: process_status
+┌─────────────────────┬───────────────────────────┬───────────────────┐
+│ COLUMN NAME         │ DATA TYPE                 │ CONSTRAINTS       │
+├─────────────────────┼───────────────────────────┼───────────────────┤
+│ id                  │ BIGINT                    │ PRIMARY KEY       │
+│ sub_process_name    │ VARCHAR(100)              │ NOT NULL          │
+│ status              │ VARCHAR(50)               │ CHECK (status...) │
+│ process_id          │ UUID                      │ INDEXED (tracking)│
+│ payload_response_id │ BIGINT                    │ FOREIGN KEY       │
+└─────────────────────┴───────────────────────────┴───────────────────┘
+                               │
+                               ▼
+TABLE: payload_response
+┌─────────────────────┬───────────────────────────┬───────────────────┐
+│ payload_response_id │ BIGINT                    │ PRIMARY KEY       │
+│ payload             │ JSONB                     │ NULLABLE          │
+│ response            │ JSONB                     │ NULLABLE          │
+└─────────────────────┴───────────────────────────┴───────────────────┘</div>
+
+            <h3>2. SQL Server Database (Symplr Core Target Schema)</h3>
+            <p>This is where valid provider records are persisted. This schema contains complex relationships between Practitioners, Specialties, Locations, and Product Contracts.</p>
+
+            <h4>The `Practitioners` Table</h4>
+            <p>Stores core individual provider records.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column Name</th>
+                        <th>Type</th>
+                        <th>Relational Constraint</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>`PractitionerID`</td>
+                        <td>Int</td>
+                        <td>Primary Key</td>
+                        <td>Internal database record key</td>
+                    </tr>
+                    <tr>
+                        <td>`NationalProviderID`</td>
+                        <td>Varchar(10)</td>
+                        <td>Unique Key</td>
+                        <td>The individual's Type-1 NPI</td>
+                    </tr>
+                    <tr>
+                        <td>`SocialSecurityNumber`</td>
+                        <td>Varchar(9)</td>
+                        <td>Unique Key</td>
+                        <td>SSN (used to enforce unique matches)</td>
+                    </tr>
+                    <tr>
+                        <td>`LastName` / `FirstName`</td>
+                        <td>Varchar(100)</td>
+                        <td>None</td>
+                        <td>Practitioner legal name</td>
+                    </tr>
+                    <tr>
+                        <td>`Archived`</td>
+                        <td>Varchar(1)</td>
+                        <td>`'N'` or `'Y'`</td>
+                        <td>Soft-delete status flag</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>The `PractitionerLocations` Table</h4>
+            <p>Connects a Practitioner to physical Practice Locations.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column Name</th>
+                        <th>Type</th>
+                        <th>Relational Constraint</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>`PractitionerLocationRecID`</td>
+                        <td>Int</td>
+                        <td>Primary Key</td>
+                        <td>Unique record key</td>
+                    </tr>
+                    <tr>
+                        <td>`PractitionerID`</td>
+                        <td>Int</td>
+                        <td>Foreign Key</td>
+                        <td>References `Practitioners.PractitionerID`</td>
+                    </tr>
+                    <tr>
+                        <td>`LocationID`</td>
+                        <td>Int</td>
+                        <td>Foreign Key</td>
+                        <td>References `PracticeLocations.LocationID`</td>
+                    </tr>
+                    <tr>
+                        <td>`PrimaryLocation`</td>
+                        <td>Varchar(1)</td>
+                        <td>`'Y'` or `'N'`</td>
+                        <td>Enforces the BRP_0023 Primary Location constraint</td>
+                    </tr>
+                    <tr>
+                        <td>`DateTo`</td>
+                        <td>DateTime</td>
+                        <td>None</td>
+                        <td>When the practitioner left this location (null if active)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>The `LocationProducts` Table</h4>
+            <p>Links Practitioner Locations to Insurance Products/Contracts.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column Name</th>
+                        <th>Type</th>
+                        <th>Relational Constraint</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>`LocationProductRecID`</td>
+                        <td>Int</td>
+                        <td>Primary Key</td>
+                        <td>Unique product record key</td>
+                    </tr>
+                    <tr>
+                        <td>`LocationID`</td>
+                        <td>Int</td>
+                        <td>Foreign Key</td>
+                        <td>References `PracticeLocations.LocationID`</td>
+                    </tr>
+                    <tr>
+                        <td>`ProductID`</td>
+                        <td>Int</td>
+                        <td>Foreign Key</td>
+                        <td>References the lookup Product ID</td>
+                    </tr>
+                    <tr>
+                        <td>`DateFrom` / `DateTo`</td>
+                        <td>DateTime</td>
+                        <td>None</td>
+                        <td>Product contract term span</td>
+                    </tr>
+                    <tr>
+                        <td>`TerminationTypeID`</td>
+                        <td>Int</td>
+                        <td>None</td>
+                        <td>Why the contract was terminated (requires DateTo)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- DAY 1: E2E FLOW CORE PYTHON LOGIC -->
+        <section id="day1-keywords">
+            <h2>E2E Flow Core Python Logic</h2>
+            <p>The orchestration layer uses custom Python functions under our Robot keywords to perform state-machine validations on Postgres during pipeline execution.</p>
+
+            <div class="info-box">
+                <h4>Postgres Connection Configuration</h4>
+                <p>All database queries are executed via thread-safe connection pools configured in our base utility layer. Make sure the target system is reachable via VPN or local networking before running the automation suite.</p>
+            </div>
+
+            <pre><code class="language-python"># Implementation of Postgres Database Validation Keywords
+import json
+import time
+from typing import Dict, Any, List
+
+def _parse_response_json(payload: dict) -> dict:
+    """Safely converts string responses to JSON dictionary format."""
+    response = payload.get("response", {})
+    if isinstance(response, str):
+        try:
+            return json.loads(response)
+        except json.JSONDecodeError:
+            return {}
+    return response
+
+def _collect_dl_failures(payload_response_id: int) -> List[str]:
+    """
+    Fetches the Data Loader response payload, extracts object-level results, 
+    and returns a list of failed transactions.
+    """
+    db_payload = get_payload_response(payload_response_id)
+    response_json = _parse_response_json(db_payload)
+    
+    failed_messages = []
+    # Collect errors using response_collector utility
+    collect_response(response_json, failed_messages)
+    
+    R.section("DATA LOADER REJECTIONS DETECTED")
+    if failed_messages:
+        for msg in failed_messages:
+            R.failure(msg)
+    else:
+        R.success("No loader errors found. Relational persistence succeeded.")
+        
+    return failed_messages</code></pre>
+        </section>
+
+        <!-- DAY 2: GORULES PARSING & INTEGRATION -->
+        <section id="day2-gorules">
+            <h2>Day 2: GoRules Parsing & Integration</h2>
+            <p>Day 2 introduces the business rules engine: **GoRules**. We'll cover how our framework handles rule processing, timing phases, and automatic data correction checks.</p>
+
+            <div class="info-box">
+                <h4>What is the GoRules Service?</h4>
+                <p>GoRules is a containerized business rules engine that intercepts our transformed payloads and runs validation checks on them. The results are logged as a structured JSON object in Postgres. Our framework flattens and validates these results in real time.</p>
+            </div>
+
+            <h3>GoRules Response Payload Structure</h3>
+            <p>The GoRules response JSON contains a <code>"rules"</code> block divided into entity sections. Here is an authentic payload example showing both standard runs and triggered errors:</p>
+
+            <pre><code class="language-json">{
+  "data": {
+    "nationalProviderID": "1114619954",
+    "lastName": "kumar",
+    "firstName": "sunil"
+  },
+  "rules": {
+    "speciality": [
+      {
+        "ruleID": "BRP_0053",
+        "ruleName": "MissingPrimarySpecialityCheck",
+        "messageType": "Success",
+        "message": ""
+      },
+      {
+        "ruleID": "BRP_0054",
+        "ruleName": "MultiplePrimarySpecialityCheck",
+        "messageType": "Error",
+        "message": "MULTIPLE PRIMARY SPECIALTIES"
+      }
+    ],
+    "practice.serviceLocation.product": [
+      {
+        "ruleID": "BRP_0023",
+        "ruleName": "ProductOnNonPrimaryLocation",
+        "messageType": "Error",
+        "message": "Non-primary location should not have product/contracts assigned"
+      }
+    ]
+  }
+}</code></pre>
+
+            <h3>GoRules Validation Logic (Flattening Algorithm)</h3>
+            <p>Because rules are scattered across different sections in the JSON (`speciality`, `practice.serviceLocation.product`, etc.), the framework uses a flattening algorithm to verify them uniformly:</p>
+
+            <pre><code class="language-python">def _flatten_go_rules(response_json: dict) -> List[dict]:
+    """
+    Flattens GoRules sections (speciality, demographics, products, etc.)
+    into a single list of rules, injecting the source section as metadata.
+    """
+    rules_obj = response_json.get("rules", response_json) or {}
+    flat_list = []
+    
+    for section_name, section_rules in rules_obj.items():
+        if isinstance(section_rules, list):
+            for rule in section_rules:
+                rule_copy = dict(rule)
+                rule_copy["_section"] = section_name
+                flat_list.append(rule_copy)
+                
+    return flat_list</code></pre>
+        </section>
+
+        <!-- DAY 2: REAL-LIFE TEST SCENARIOS -->
+        <section id="day2-scenarios">
+            <h2>Real-Life Test Scenarios</h2>
+            <p>This section provides a complete, step-by-step guide to testing the 8 most critical BRP, BRG, and BRF business rules in our automation suite, including actual input data and database tracing queries.</p>
+
+            <!-- Scenario 1 -->
+            <h3>Scenario 1: BRP_0023 — ProductOnNonPrimaryLocation</h3>
+            <p><strong>Business Context:</strong> A practitioner can work at multiple clinics within a practice group, but insurance contracts are strictly tied to their **Primary Location** (the location where the provider spends most of their time). To maintain data integrity, you cannot attach an insurance product to a secondary, non-primary location.</p>
+            
+            <p><strong>Input Payload setup:</strong> Set <code>PrimaryLocation = 'N'</code> for the Service Location, but still attach a product contract (e.g. <code>EP1000261</code>) under the same location block.</p>
+            
+            <pre><code class="language-json">{
+  "NationalProviderID": "1114619954",
+  "ServiceLocationname": "LEXINGTON CLINIC",
+  "PrimaryLocation": "N",              // ❌ Set to non-primary
+  "ServiceLineNumber1": "1221 S Broadway",
+  "ProductName": "A001 - Non Par Network",
+  "ProductContractName": "A001",       // ❌ Try to link product here
+  "ProductStatusTypeName": "Non-Participating"
+}</code></pre>
+
+            <p><strong>DB Verification Query:</strong> Verify that the practitioner location record was successfully created as non-primary in SQL Server, and that the product loading step was correctly blocked:</p>
+            <pre><code class="language-sql">SELECT 
+    ploc.PractitionerLocationRecID,
+    ploc.PrimaryLocation, -- Expected: 'N'
+    (SELECT COUNT(1) FROM LocationProducts lp WHERE lp.LocationID = ploc.LocationID) AS ProductCount -- Expected: 0 (blocked)
+FROM PractitionerLocations ploc
+JOIN Practitioners pr ON pr.PractitionerID = ploc.PractitionerID
+WHERE pr.NationalProviderID = '1114619954';</code></pre>
+
+            <!-- Scenario 2 -->
+            <h3>Scenario 2: BRP_0027 — ProductSpecialtyPresentInDemogSpecialtyCheck</h3>
+            <p><strong>Business Context:</strong> Before you can enroll a provider in an insurance network with a specific contract specialty (e.g., Cardiology), the provider must actually hold that specialty at their high-level demographic credentialing level. You cannot link a product specialty to a provider who isn't credentialed for it.</p>
+            
+            <p><strong>Input Payload setup:</strong> Define a product specialty (e.g., <code>Cardiology</code>), but leave the high-level practitioner specialties completely blank.</p>
+            
+            <pre><code class="language-json">{
+  "NationalProviderID": "1114619954",
+  "ProductSpecialtyName": "Cardiology", // ❌ Product specialty provided
+  "PractitionerSpecialtyName": ""       // ❌ High-level specialty left blank
+}</code></pre>
+
+            <p><strong>DB Verification Query:</strong> Verify that no high-level specialty was created for this practitioner, causing the product creation step to be skipped:</p>
+            <pre><code class="language-sql">SELECT 
+    (SELECT COUNT(1) FROM PractitionerSpecialties ps WHERE ps.PractitionerID = p.PractitionerID) AS DemogSpecialtyCount, -- Expected: 0
+    (SELECT COUNT(1) FROM LocationProducts lp JOIN PractitionerLocations pl ON pl.LocationID = lp.LocationID WHERE pl.PractitionerID = p.PractitionerID) AS ProductCount -- Expected: 0
+FROM Practitioners p
+WHERE p.NationalProviderID = '1114619954';</code></pre>
+
+            <!-- Scenario 3 -->
+            <h3>Scenario 3: BRG_0004 — PracticeTypeServCatCheck</h3>
+            <p><strong>Business Context:</strong> Enforces consistency between the Practice Type (e.g., `"Primary Care"`, `"Specialist"`, `"Solo Association"`) and the specialties offered. A clinic designated as `"Primary Care"` cannot have an advanced, whitelisted specialist category like `"Cardiology Services"` assigned to its locations.</p>
+            
+            <p><strong>Input Payload setup:</strong> Upload a practice update setting `PracticeTypeName` to `"Primary Care"`, but specify `'CARDIOLOGY SERVICES'` (case-sensitive) as the location's service category name.</p>
+            
+            <pre><code class="language-json">{
+  "GroupNationalProviderID": "1770836785",
+  "PracticeTypeName": "Primary Care",                      // ❌ Primary Care
+  "BillingAddressTypeName": "Billing",
+  "BillingServiceTypeName": "Group Specialty",
+  "BillingServiceCategoryTypeName": "CARDIOLOGY SERVICES"   // ❌ Specialist category
+}</code></pre>
+
+            <p><strong>DB Verification Query:</strong> Verify that the practice location is classified as a Billing location, but has an incompatible service category mapping:</p>
+            <pre><code class="language-sql">SELECT 
+    pl.LocationName,
+    pl.LocationTypeName, -- Expected: 'Billing'
+    ls.ServiceCategoryTypeName -- Expected: 'CARDIOLOGY SERVICES'
+FROM vwPracticeLocations pl
+JOIN vwLocationServices ls ON ls.LocationID = pl.LocationID
+WHERE pl.PracticeNationalProviderID = '1770836785';</code></pre>
+
+            <!-- Scenario 4 -->
+            <h3>Scenario 4: BRG_0003 — GroupSpecServCatCheck</h3>
+            <p><strong>Business Context:</strong> Broad clinical departments must align with compatible specialties. For example, you cannot map a service department designated as `"Dentistry"` to an active specialty category of `"Cardiology"` or `"Dermatology"`.</p>
+            
+            <p><strong>Input Payload setup:</strong> Set `BillingServiceTypeName` to `"Dentistry"` and map it to `BillingServiceCategoryTypeName` of `"Cardiology"`.</p>
+            
+            <pre><code class="language-json">{
+  "GroupNationalProviderID": "1770836785",
+  "BillingServiceTypeName": "Dentistry",             // ❌ Dental Department
+  "BillingServiceCategoryTypeName": "Cardiology"      // ❌ Medical Specialty
+}</code></pre>
+
+            <p><strong>DB Verification Query:</strong> Verify that the location's service category mappings contain the mismatch, causing the transaction to fail:</p>
+            <pre><code class="language-sql">SELECT 
+    ls.ServiceTypeName,         -- Expected: 'Dentistry'
+    ls.ServiceCategoryTypeName  -- Expected: 'Cardiology'
+FROM vwLocationServices ls
+JOIN vwPracticeLocations pl ON pl.LocationID = ls.LocationID
+WHERE pl.PracticeNationalProviderID = '1770836785';</code></pre>
+
+            <!-- Scenario 5 -->
+            <h3>Scenario 5: BRP_0022 — MultiplePrimaryLocations</h3>
+            <p><strong>Business Context:</strong> A single practitioner cannot be assigned more than one active primary location within the same practice/group. Having multiple primary locations would break scheduling systems and contract assignments.</p>
+            
+            <p><strong>Input Payload setup (Two-row CSV upload):</strong> Create a single CSV with two rows for the same practitioner NPI and group TIN. Mark `PrimaryLocation = Y` on **both** rows for different addresses.</p>
+            
+            <pre><code class="language-json">// Row 1
+{
+  "NationalProviderID": "1114882784",
+  "ServiceLocationname": "Location One",
+  "PrimaryLocation": "Y",
+  "ServiceLineNumber1": "977 N Collier Blvd"
+}
+// Row 2
+{
+  "NationalProviderID": "1114882784",
+  "ServiceLocationname": "Location Two",
+  "PrimaryLocation": "Y",
+  "ServiceLineNumber1": "221 Jericho Tpke"
+}</code></pre>
+
+            <p><strong>DB Verification Query:</strong> Run the developer's query grouped by practitioner ID to verify that more than one active, unarchived primary location is recorded in SQL Server:</p>
+            <pre><code class="language-sql">SELECT 
+    ploc.PractitionerID,
+    COUNT(ploc.LocationID) AS PrimaryLocationCount -- Expected: > 1
+FROM PractitionerLocations ploc
+WHERE ploc.PrimaryLocation = 'Y'
+  AND ploc.Archived = 'N'
+GROUP BY ploc.PractitionerID
+HAVING COUNT(ploc.LocationID) > 1;</code></pre>
+
+            <!-- Scenario 6 -->
+            <h3>Scenario 6: BRP_0021 — MissingPrimaryLocation</h3>
+            <p><strong>Business Context:</strong> Conversely, every active practitioner associated with a group must have **at least one** active primary location. You cannot load active locations without designating one as the primary.</p>
+            
+            <p><strong>Input Payload setup:</strong> Upload a new practitioner with an active service location, but set `PrimaryLocation = N`.</p>
+            
+            <pre><code class="language-json">{
+  "NationalProviderID": "1114882784",
+  "ServiceLocationname": "Lexington Clinic",
+  "PrimaryLocation": "N",              // ❌ Set to non-primary
+  "ServiceLineNumber1": "1221 S Broadway"
+}</code></pre>
+
+            <p><strong>DB Verification Query:</strong> Verify that active service locations exist for this practitioner, but none are marked as primary:</p>
+            <pre><code class="language-sql">SELECT 
+    COUNT(LocationID) AS ActiveLocations,                  -- Expected: > 0
+    SUM(CASE WHEN PrimaryLocation = 'Y' THEN 1 ELSE 0 END) AS PrimaryCount -- Expected: 0
+FROM PractitionerLocations
+WHERE PractitionerID = (SELECT PractitionerID FROM Practitioners WHERE NationalProviderID = '1114882784')
+  AND Archived = 'N';</code></pre>
+
+            <!-- Scenario 7 -->
+            <h3>Scenario 7: BRP_0058 — MissingSpecialityCheckNonPAR</h3>
+            <p><strong>Business Context:</strong> Non-Participating (Non-PAR) practitioners do not belong to the standard provider network and typically do not require the same clinical credentialing checks. However, to maintain basic directories, they **must still have at least one valid specialty** mapped in the database.</p>
+            
+            <p><strong>Input Payload setup:</strong> Map a product with `ProductStatusTypeName` set to `"Non-Participating"`, but leave all high-level practitioner specialty fields completely blank.</p>
+            
+            <pre><code class="language-json">{
+  "NationalProviderID": "1114882784",
+  "ProductStatusTypeName": "Non-Participating",
+  "PractitionerSpecialtyName": ""       // ❌ Missing specialty
+}</code></pre>
+
+            <p><strong>DB Verification Query:</strong> Verify that the provider is loaded without active specialties and with only non-participating products, which triggers the error:</p>
+            <pre><code class="language-sql">SELECT 
+    (SELECT COUNT(1) FROM PractitionerSpecialties WHERE PractitionerID = p.PractitionerID AND Archived = 'N') AS SpecialtyCount, -- Expected: 0
+    (SELECT COUNT(1) FROM vwPractitionerProducts WHERE PractitionerID = p.PractitionerID AND StatusTypeName = 'Participating') AS ActiveProductCount -- Expected: 0
+FROM Practitioners p
+WHERE p.NationalProviderID = '1114882784';</code></pre>
+
+            <!-- Scenario 8 -->
+            <h3>Scenario 8: BRF_0005 — FacilityAddressCheck</h3>
+            <p><strong>Business Context:</strong> Physical locations (Facilities) must have accurate address records. Zip codes must match standard formats: exactly **5 digits** (e.g. `60602`) or **9 digits** (e.g. `60602-1234`). Bad zip codes (such as those containing letters or wrong lengths) must trigger failures across **all three address nodes**: Billing, Service, and Tax ID.</p>
+            
+            <p><strong>Input Payload setup:</strong> Provide invalid zip codes (`12`, `34`, `56`) across the Billing, Service, and Tax ID address blocks in the CSV. (To test the Tax ID block, we use the `Billing...` columns but set `BillingAddressTypeName` to `"Tax ID"`).</p>
+            
+            <pre><code class="language-json">{
+  "FacilityID": "65605336",
+  "BillingZipCode": "12",               // ❌ Invalid Billing Zip
+  "BillingAddressTypeName": "Billing",
+  "ServiceZipCode": "34",               // ❌ Invalid Service Zip
+  "ServiceAddressTypeName": "Service"
+}</code></pre>
+
+            <p><strong>DB Verification Query:</strong> Verify that the addresses are saved with invalid zip formats, triggering the errors across both nodes:</p>
+            <pre><code class="language-sql">SELECT 
+    LocationName,
+    LocationTypeName, -- Matches 'Billing' and 'Service'
+    ZipCode           -- Expected: '12' and '34' (invalid formats)
+FROM vwPracticeLocations
+WHERE PracticeNationalProviderID = '1396510228';</code></pre>
+        </section>
+
+        <!-- DAY 2: TROUBLESHOOTING FAILED EXECUTIONS -->
+        <section id="day2-troubleshooting">
+            <h2>Day 2: Debugging Failed Executions</h2>
+            <p>This section is a practical playbook for debugging failed runs in your automation pipeline. If an automated script fails, use these steps to diagnose the issue quickly.</p>
+
+            <div class="danger-box">
+                <h4>Playbook Step 1: Check for System Crashes in Postgres</h4>
+                <p>Before checking GoRules or database records, check if the validation service crashed during processing. In Postgres, run this query:</p>
+                <pre><code class="language-sql">SELECT 
+    id, sub_process_name, status, error, created_at
+FROM process_status
+WHERE process_id = '9d28bec9-f335-425e-91af-3ee63ffd68c0' -- Replace with your Tracking No / Process ID
+ORDER BY created_at ASC;</code></pre>
+                <p><strong>What to look for:</strong> If any row has a status of <code>Error</code>, check the <code>error</code> column. For example, if it says <code>'NoneType' object has no attribute 'lower'</code>, this is a system crash (typically due to a missing mandatory field like specialty name) and should be reported to the development team as a bug.</p>
+            </div>
+
+            <div class="danger-box">
+                <h4>Playbook Step 2: Fetch Raw GoRules Output</h4>
+                <p>If the pipeline completed successfully but your rules didn't fire as expected, run this query to retrieve the exact rules output from GoRules:</p>
+                <pre><code class="language-sql">SELECT jsonb_pretty(response::jsonb -> 'rules')
+FROM payload_response
+WHERE payload_response_id = 55088843; -- Replace with the GoRules payload_response_id</code></pre>
+                <p><strong>What to look for:</strong> Examine the array of evaluated rules. Look for your target rule name (e.g. `ProductOnNonPrimaryLocation`). If it has a `messageType` of `Success`, it means the data you uploaded was actually valid, and you need to adjust your overrides to trigger the error condition.</p>
+            </div>
+
+            <div class="danger-box">
+                <h4>Playbook Step 3: Check Actual Saved DB State</h4>
+                <p>If GoRules reported an error but your test didn't fail, or vice versa, check the actual state of the record in the Symplr database:</p>
+                <pre><code class="language-sql">SELECT 
+    pr.NationalProviderID,
+    ploc.PrimaryLocation,
+    ploc.DateTo,
+    ploc.Archived
+FROM Practitioners pr
+JOIN PractitionerLocations ploc ON ploc.PractitionerID = pr.PractitionerID
+WHERE pr.NationalProviderID = '1114619954'; -- Replace NPI</code></pre>
+                <p><strong>What to look for:</strong> Check if <code>PrimaryLocation</code> is saved as <code>Y</code> or <code>N</code>. If it is <code>N</code> but your input CSV had <code>Y</code>, it means your CSV generation script is overwriting your overrides, or there is an existing primary location in the database causing a conflict.</p>
+            </div>
+        </section>
+
+        <!-- DAY 2: EXTENDING THE AUTOMATION SUITE -->
+        <section id="day2-extending">
+            <h2>Day 2: Extending the Automation Suite</h2>
+            <p>One of the main strengths of the PDQA framework is how easy it is to extend. This section shows how to add new rules to your test suite.</p>
+            
+            <h3>Adding a New Rule in 3 Steps</h3>
+            
+            <h4>Step 1: Add the Rule Metadata to the Catalog</h4>
+            <p>Open `pdqa_db_validation.py` and add your new rule to `GO_RULES_CATALOG` or `GROUP_GO_RULES_CATALOG`:</p>
+            <pre><code class="language-python"># Adding a new practitioner rule
+"BRP_0099": {
+    "ruleName": "NewRuleCheck",
+    "phase": 2,
+    "entity": "Practitioner Location",
+    "error_type": "Error",
+    "auto_correct": "N",
+    "timing": "Both",
+    "message": "Expected rule failure message",
+}</code></pre>
+
+            <h4>Step 2: Add a Database Query for Test Data (For Negative Tests)</h4>
+            <p>Open `pdqa_db_queries.py` and write a query to fetch valid test data candidates:</p>
+            <pre><code class="language-python">def get_new_rule_violation_data() -> dict:
+    """
+    Finds a practitioner who violates BRP_0099.
+    """
+    picker_query = (
+        select(
+            Practitioners.nationalproviderid.label("NationalProviderID"),
+            vwPracticeLocations.practicetaxidnumber.label("PracticeTaxIDNumber")
+        )
+        .where(...)
+    )
+    return _execute_picker_query(picker_query, "NewRuleCheck", "get_new_rule_violation_data")</code></pre>
+
+            <h4>Step 3: Write the Robot Framework Test Case</h4>
+            <p>Create a new `.robot` file, configure your variables, and define the test workflow:</p>
+            <pre><code class="language-robotframework">*** Variables ***
+${RULE_NAME}            NewRuleCheck
+${EXPECTED_ERROR_MSG}   Expected rule failure message
+
+*** Test Cases ***
+Validate NewRuleCheck Fails as Expected
+    [Tags]    negative    NewRuleCheck    BRP_0099
+    Execute Data Remediation E2E Workflow    ${PROCESS_PRACTITIONER}</code></pre>
+        </section>
+    </main>
+</div>
+
+</body>
+</html>
