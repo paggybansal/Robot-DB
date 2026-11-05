@@ -8,6 +8,7 @@ import e2e_excel
 from e2e_excel import (EXPECTED_FILE, REPORT_FILE, REQUIRED_REPORT_COLUMNS,
                        TAB_BY_GROUP, list_sheets, load_expected_records,
                        read_excel_as_str, read_sheet_metadata)
+from report import RUN_INFO
 from verify import RESULTS, verify_record
 
 # Flip on once you confirm "Processed Record Count" == number of rows in that tab
@@ -25,7 +26,15 @@ def _test_id(r):
 
 # --------------------------------------------------------------------------- fixtures
 @pytest.fixture(scope="session")
-def report_tabs():
+def report_meta():
+    meta = {}
+    for group in GROUPS_UNDER_TEST:
+        meta[group] = read_sheet_metadata(REPORT_FILE, TAB_BY_GROUP[group])
+    return meta
+
+
+@pytest.fixture(scope="session")
+def report_tabs(report_meta):
     assert REPORT_FILE.exists(), (
         f"Facets report not found: {REPORT_FILE}\n"
         f"Set the FACETS_REPORT env var or drop the file in {REPORT_FILE.parent}")
@@ -35,15 +44,21 @@ def report_tabs():
         keyword = TAB_BY_GROUP.get(group)
         assert keyword, (f"Unknown GROUP '{group}' in {EXPECTED_FILE.name}. "
                          f"Allowed: {sorted(TAB_BY_GROUP)}")
-        tabs[group] = read_excel_as_str(REPORT_FILE,
-                                        sheet_name=keyword,
-                                        required=REQUIRED_REPORT_COLUMNS)
+        df = read_excel_as_str(REPORT_FILE, sheet_name=keyword,
+                               required=REQUIRED_REPORT_COLUMNS)
+        tabs[group] = df
+
+        meta = report_meta.get(group, {})
+        RUN_INFO.setdefault("tabs", []).append({
+            "group": group,
+            "sheet": meta.get("sheet", keyword),
+            "title": meta.get("title", ""),
+            "audit_status": meta.get("audit_status", ""),
+            "processed_count": meta.get("processed_count"),
+            "header_row_index": meta.get("header_row_index"),
+            "rows_parsed": len(df),
+        })
     return tabs
-
-
-@pytest.fixture(scope="session")
-def report_meta():
-    return {g: read_sheet_metadata(REPORT_FILE, TAB_BY_GROUP[g]) for g in GROUPS_UNDER_TEST}
 
 
 # --------------------------------------------------------------------------- sanity
