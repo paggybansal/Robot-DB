@@ -65,3 +65,27 @@ def build_payload(name: str) -> dict:
     if not isinstance(payload, dict):
         pytest.fail(f"Payload builder '{name}' returned {type(payload).__name__}, expected dict")
     return payload
+
+
+# --------------------------------------------------------------------------- 4. FALLOUT TABLE
+from utils import db_utils                                            # noqa: E402
+
+# Per-group fallout readers. Set to None if a group has no reader yet.
+FALLOUT_GETTERS = {
+    "PRACTITIONER": db_utils.get_practitioner_fallout,
+    "PRACTICE":     getattr(db_utils, "get_practice_fallout", None),
+    "FACILITY":     getattr(db_utils, "get_facility_fallout", None),
+}
+
+# Your existing cross-check helper. Left optional so the suite still runs
+# if the signature changes.
+VALIDATE_FALLOUT_AGAINST_RESPONSE = getattr(
+    db_utils, "validate_fallout_against_response", None)
+
+
+def get_fallout(group: str, npi: str):
+    """Read the fallout table for this entity, or None if no reader is wired."""
+    getter = FALLOUT_GETTERS.get((group or "").upper())
+    if getter is None:
+        return None
+    return getter(npi)
