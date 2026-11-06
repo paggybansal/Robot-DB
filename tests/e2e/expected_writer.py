@@ -20,7 +20,7 @@ import rules as rule_catalog
 from e2e_excel import (EXPECTED_COLUMNS, EXPECTED_FILE, TAB_BY_GROUP,
                        key_norm, load_expected_records, norm)
 
-EXTRA_COLUMNS = ["RUN ID", "ENV", "PDQA TEST"]
+EXTRA_COLUMNS = ["RUN ID", "ENV", "PDQA TEST", "PDQA FALLOUT STATUS"]
 ALL_COLUMNS = EXPECTED_COLUMNS + EXTRA_COLUMNS
 
 VALID_GROUPS = {g.upper() for g in TAB_BY_GROUP}
@@ -54,7 +54,7 @@ class ExpectedRecords:
     def add(self, group: str, npi: str, rule_id: str = "", *,
             gnpi: str = "", taxid: str = "", symplr_id: str = "",
             expected_status: str = "INACTIVE", scenario: str = "",
-            pdqa_test: str = ""):
+            pdqa_test: str = "", pdqa_fallout_status: str = ""):
         group = key_norm(group) or rule_catalog.group_of(rule_id)
         rule_id = key_norm(rule_id)
         npi, gnpi, taxid = norm(npi), norm(gnpi), norm(taxid)
@@ -82,6 +82,7 @@ class ExpectedRecords:
             "RUN ID":          self.run_id,
             "ENV":             self.env,
             "PDQA TEST":       norm(pdqa_test),
+            "PDQA FALLOUT STATUS":  key_norm(pdqa_fallout_status),
         }
         self.rows.append(row)
         return row
@@ -161,7 +162,7 @@ class ExpectedRecords:
 
         widths = {"GROUP": 15, "SYMPLR ID": 13, "TAXID": 13, "NPI": 13, "GNPI": 13,
                   "RULE ID": 11, "EXPECTED STATUS": 17, "SCENARIO": 38,
-                  "PDQA RUN TIME": 20, "RUN ID": 18, "ENV": 8, "PDQA TEST": 50}
+                  "PDQA RUN TIME": 20, "RUN ID": 18, "ENV": 8, "PDQA TEST": 50, "PDQA FALLOUT STATUS": 20}
         for i, col in enumerate(ALL_COLUMNS, start=1):
             ws.column_dimensions[get_column_letter(i)].width = widths.get(col, 16)
         ws.freeze_panes = "A2"
